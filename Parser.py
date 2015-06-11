@@ -28,8 +28,13 @@ def parse_line(line):
         pass
     elif splited_line[0] == "Exit:":
         pass
-
-
+    elif spliter_line[0] == "InitGame:":
+        mapName = spliter_line[spliter_line.index("mapname")+1]
+        # creer une nouvelle game
+        # ActualGame = Game(mapName)
+    elif spliter_line[0] == "Exit:":
+        end = spliter_line[1]
+        #faire le commit de la game en db
 engine = create_engine('sqlite:///tmp/test.db')
 session = sessionmaker()
 session.configure(bind=engine)
