@@ -14,8 +14,8 @@ class Player(Base):
 class PlayerGame(Base):
     __tablename__ = 'playerGame'
     game_id = Column(Integer, ForeignKey('game.id'), primary_key=True)
-    player = Column(String, ForeignKey('player.pseudo'), primary_key=True)
-    kill = Column(String)
+    player = Column(String, ForeignKey('player.id'), primary_key=True)
+    kill = Column(Integer)
 
 class Game(Base):
     __tablename__ = 'game'
@@ -23,23 +23,28 @@ class Game(Base):
     map_name = Column(String)
     termination = Column(String)
 
+current_game = None
 
 def parse_line(line):
     splited_line = line.split(' ')
     if splited_line[0] == "ClientConnect:":
         client_info = f.readline().split('\\')
-        player = Player(pseudo=client_info[1])
+        player_game = PlayerGame(kill=1)
+        player_game.game_id = current_game.id
     elif splited_line[0] == "Kill:":
         pass
     elif splited_line[0] == "Item:":
         pass
-    elif spliter_line[0] == "InitGame:":
-        mapName = spliter_line[spliter_line.index("mapname")+1]
-        # creer une nouvelle game
-        # ActualGame = Game(mapName)
-    elif spliter_line[0] == "Exit:":
-        end = spliter_line[1]
-        #faire le commit de la game en db
+    elif splited_line[0] == "InitGame:":
+        map_name = splited_line[splited_line.index("mapname")+1]
+        current_game = Game(map_name=map_name, termination=None)
+        s = session()
+        s.add(current_game)
+        s.commit()
+    elif splited_line[0] == "Exit:":
+        end = splited_line[1]
+        current_game.termination = end;
+
 engine = create_engine('sqlite:///')
 session = sessionmaker()
 session.configure(bind=engine)
