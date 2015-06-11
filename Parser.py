@@ -21,18 +21,40 @@ def parse_line(line):
     splited_line = line.split(' ')
     if splited_line[0] == "ClientConnect:":
         client_info = f.readline().split('\\')
-        player = Player(pseudo=client_info[1])
+        #player = Player(pseudo=client_info[1])
+        print('connection du joueur' + client_info[1])
+        joueurs[client_info[1]] = -1
     elif splited_line[0] == "Kill:":
-        pass
+        nomTueur = splited_line[4]
+        nomTue = splited_line[6]
+        arme = splited_line[8]
+        print('le joueur '+nomTueur+' a tué '+nomTue+' avec '+arme)
     elif splited_line[0] == "Item:":
-        pass
-    elif spliter_line[0] == "InitGame:":
-        mapName = spliter_line[spliter_line.index("mapname")+1]
-        # creer une nouvelle game
-        # ActualGame = Game(mapName)
-    elif spliter_line[0] == "Exit:":
-        end = spliter_line[1]
+        idLooter = splited_line[1]
+        nomItem = splited_line[2]
+        for i in joueurs:
+            if joueurs[i] == idLooter:
+                nomjoueur = i
+                print('le joueur '+nomjoueur+' a trouvé '+nomItem)
+                break
+
+    elif splited_line[0] == "Rcon":
+        Init = splited_line[3].split('\\')
+        print('-------------------------------------')
+        print('changement de map '+splited_line[4])
+        print('-------------------------------------')
+    elif splited_line[0] == "Exit:":
+        end = splited_line[1]
+        print('-------------------------------------')
+        print('fin de la map par:'+end)
+        print('-------------------------------------')
         #faire le commit de la game en db
+    elif splited_line[0] == "ClientUserinfoChanged:":
+        id = splited_line[1]
+        name = splited_line[2].split('\\')[1]
+        joueurs[name]=id
+        print('l id de '+name+' est '+id)
+
 engine = create_engine('sqlite:///tmp/test.db')
 session = sessionmaker()
 session.configure(bind=engine)
