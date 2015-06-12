@@ -29,37 +29,34 @@ class Game(Base):
 
 current_game = None
 player_game_list = {} #(pseudo, player_game)
-player_id_match = {} #(pseudo, id ingame du joueur)
+player_id_match = {} #(id ingame du joueur, pseudo)
 
 def parse_line(line):
     splited_line = line.split(' ')
     if splited_line[0] == "ClientConnect:":
-        client_info = f.readline().split('\\')
+        # client_info = f.readline().split('\\')
         # rechercher joueur dans bd, si existe pas le creer
         player_game = PlayerGame(kill=0)
         player_game.game_id = current_game.id
         # rajouter joueur dans player_game_list
-	print('connection du joueur' + client_info[1])
+        print('connection du joueur d id' + splited_line[1])
     elif splited_line[0] == "Kill:":
-        nom_tueur = splited_line[4]
-        nom_tue = splited_line[6]
-        arme = splited_line[8]
+        id_killer = splited_line[1]
+        id_killed = splited_line[2]
+        id_weapon = splited_line[3][0:-1]
         # mettre à jour player_game_list
-        print('le joueur '+nomTueur+' a tué '+nomTue+' avec '+arme)
+        print('le joueur '+player_id_match[id_killer]+' a tué '+player_id_match[id_killed]+' avec '+id_weapon)
     elif splited_line[0] == "Item:":
-        idLooter = splited_line[1]
-        nomItem = splited_line[2]
-        for i in player_id_match:
-            if player_id_match[i] == idLooter:
-                nomjoueur = i
-                print('le joueur '+nomjoueur+' a trouvé '+nomItem)
-                break
+        id_looter = splited_line[1]
+        name_item = splited_line[2][0:-1]
+        name_player = player_id_match[id_looter]
+        print('le joueur '+name_player+' a trouvé '+name_item)
     elif splited_line[0] == "Rcon":
         Init = splited_line[3].split('\\')
         print('-------------------------------------')
-        print('changement de map '+splited_line[4])
+        print('changement de map '+splited_line[4][0:-1])
         print('-------------------------------------')
-        map_name = splited_line[4]
+        map_name = splited_line[4][0:-1]
         current_game = Game(map_name=map_name, termination=None)
         s = session()
         s.add(current_game)
@@ -74,10 +71,12 @@ def parse_line(line):
         # players
     elif splited_line[0] == "ClientUserinfoChanged:":
         ingame_id = splited_line[1]
-        pseudo = splited_line[2].split('\\')[1]
-        joueurs[pseudo]=ingame_id
-        print('l id de '+name+' est '+ingame_id)
-
+        name_player = line.split('\\')[1]
+        player_id_match[ingame_id]= name_player
+        print('l id de '+name_player+' est '+ingame_id)
+    elif splited_line[0] == "ClientDisconnect:":
+        print('le joueur '+joueur[splited_line[1][0:-1]]+' s est deconnecté')
+        del player_id_match[splited_line[1][0:-1]]
 engine = create_engine('sqlite:///')
 session = sessionmaker()
 session.configure(bind=engine)
