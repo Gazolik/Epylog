@@ -31,7 +31,7 @@ class Game(Base):
 current_game = Game(map_name=None, termination=None)
 player_game_list = {}  # (pseudo, player_game)
 player_id_matching = {}  # (id ingame du joueur, pseudo)
-
+player_id_matching['1022'] = 'world'
 
 def parse_line(line, current_game, s):
     splited_line = line.split(' ')
@@ -52,6 +52,7 @@ def parse_line(line, current_game, s):
         print('le joueur '+name_player+' a trouvé '+name_item)
     elif splited_line[0] in ("Rcon", "InitGame:"):
         s.rollback()
+        player_game_list.clear()
         if splited_line[0] == "Rcon":
             map_name = splited_line[4][0:-1]
         else:
@@ -73,7 +74,8 @@ def parse_line(line, current_game, s):
             s.flush()
         s.commit()
         player_game_list.clear()
-        player_id_matching.clear()
+        #player_id_matching.clear()
+        player_id_matching['1022'] = 'world'
         # commit tous les player_game de la liste et mettre à jour tous les
         # players
     elif splited_line[0] == "ClientUserinfoChanged:":
@@ -86,10 +88,13 @@ def parse_line(line, current_game, s):
             s.add(player)
             s.flush()
             print("creation du jouer"+name_player)
-        player_game = PlayerGame(kill=0)
-        player_game.player = player
-        player_game.game = current_game
-        player_game_list[player.pseudo] = player_game
+        player_game = s.query(PlayerGame).filter(PlayerGame.game_id == current_game.id,
+                                                 PlayerGame.player_id == player.id).first()
+        if player_game is None:
+            player_game = PlayerGame(kill=0)
+            player_game.player = player
+            player_game.game = current_game
+            player_game_list[player.pseudo] = player_game
         print('l id de '+name_player+' est '+ingame_id)
     elif splited_line[0] == "ClientDisconnect:":
         print('le joueur '+player_id_matching[splited_line[1][0:-1]]+' s est deconnecté')
