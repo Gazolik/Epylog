@@ -16,7 +16,7 @@ class Player(Base):
 class PlayerGame(Base):
     __tablename__ = 'playergame'
     game_id = Column(Integer, ForeignKey('game.id'), primary_key=True)
-    player_id = Column(String, ForeignKey('player.id'), primary_key=True)
+    player_id = Column(Integer, ForeignKey('player.id'), primary_key=True)
     kill = Column(Integer)
     death = Column(Integer)
 
