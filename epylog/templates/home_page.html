@@ -1,0 +1,11 @@
+<!doctype html>
+<title>Flaskr</title>
+<body>
+  <ul class=players>
+  {% for player in players %}
+    <li><h2>{{ player.pseudo }}</h2>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+  </ul>
+</body>
