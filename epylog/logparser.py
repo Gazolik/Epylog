@@ -1,11 +1,16 @@
-from .model import Game, Player, PlayerGame, connection
+from .model import Game, Player, PlayerGame, connection, Kill
 
 
 current_game = Game(map_name=None, termination=None)
 player_game_list = {}  # (pseudo, player_game)
 player_id_matching = {}  # (id ingame du joueur, pseudo)
 player_id_matching['1022'] = 'world'
+weapon_id_matching = {10: 'Railgun', 6: 'Rocket',
+                      7: 'Rocket', 1: 'Shotgun',
+                      3: 'Machinegun', 8: 'Plasma',
+                      9: 'Plasma', 11: 'Lightning'}
 
+kills_list = []
 
 with open('logTest.log', 'r') as f:
     for line in f:
@@ -14,8 +19,23 @@ with open('logTest.log', 'r') as f:
             id_killer = splited_line[1]
             id_killed = splited_line[2]
             id_weapon = splited_line[3][0:-1]
+            kill = Kill()
+            kill.game = current_game
+            if(id_killer == '1022'):
+                id_killer = id_killed
+            kill.player_killer = connection.query(Player).filter(
+                    Player.pseudo == player_id_matching[id_killer]).first()
+            kill.player_killed = connection.query(Player).filter(
+                Player.pseudo == player_id_matching[id_killed]).first()
+            #TODO : add weapons in kills
+            kills_list.append(kill)
             if id_killer != id_killed and id_killer != '1022':
                 player_game_list[player_id_matching[id_killer]].kill += 1
+                player_game_list[player_id_matching[id_killer]].score += 1
+
+
+            else:
+                player_game_list[player_id_matching[id_killed]].score -= 1
             player_game_list[player_id_matching[id_killed]].death += 1
         elif splited_line[0] == 'Item:':
             id_looter = splited_line[1]
@@ -24,6 +44,7 @@ with open('logTest.log', 'r') as f:
         elif splited_line[0] in ('Rcon', 'InitGame:'):
             connection.rollback()
             player_game_list.clear()
+            kills_list.clear()
             if splited_line[0] == 'Rcon':
                 name = splited_line[4][0:-1]
             else:
@@ -36,6 +57,8 @@ with open('logTest.log', 'r') as f:
             current_game.termination = end
             for pseudo, player_game in player_game_list.items():
                 connection.add(player_game)
+            for kill in kills_list:
+                connection.add(kill)
             connection.commit()
             player_game_list.clear()
             player_id_matching['1022'] = 'world'
@@ -43,14 +66,16 @@ with open('logTest.log', 'r') as f:
             ingame_id = splited_line[1]
             name_player = line.split('\\')[1]
             player_id_matching[ingame_id] = name_player
-            player = connection.query(Player).filter(Player.pseudo == name_player).first()
+            player = connection.query(Player).filter(
+                Player.pseudo == name_player).first()
             if player is None:
                 player = Player(pseudo=name_player)
                 connection.add(player)
-            player_game = connection.query(PlayerGame).filter(PlayerGame.game == current_game,
-                                                 PlayerGame.player == player).first()
+            player_game = connection.query(PlayerGame).filter(
+                PlayerGame.game == current_game,
+                PlayerGame.player == player).first()
             if player_game is None:
-                player_game = PlayerGame(kill=0, death=0)
+                player_game = PlayerGame(kill=0, death=0, score = 0)
                 player_game.player = player
                 player_game.game = current_game
                 player_game_list[player.pseudo] = player_game
