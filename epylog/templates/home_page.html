@@ -2,8 +2,8 @@
 <title>Flaskr</title>
 <body>
   <ul class=players>
-  {% for player in players %}
-    <li><h2>{{ player }} </h2>
+  {% for top_player in top_players %}
+    <li><h2>{{ top_player }} </h2>
   {% else %}
     <li><em>Unbelievable.  No entries here so far</em>
   {% endfor %}
