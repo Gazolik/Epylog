@@ -18,7 +18,6 @@ def home_page():
             func.sum(PlayerGame.death).label('death_sum'),
             func.round((func.sum(func.cast(PlayerGame.kill,
                 Float))/func.sum(PlayerGame.death)), 2).label('ratio')).group_by(PlayerGame.player_id).order_by('ratio desc').join(PlayerGame.player)[0:3]
-    
     return render_template('home_page.html', players=players)
 
 
@@ -27,3 +26,7 @@ def show_players_list():
     players = db_session.query(Player).all()
     return render_template('home_page.html', players=players)
 
+
+@app.route('/playerdetails')
+def show_player_details():
+    pass
