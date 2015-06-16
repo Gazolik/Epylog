@@ -38,6 +38,7 @@ def home_page():
 
 @app.route('/playerslist')
 def show_players_list():
+    #Accessing database for player information (kills, deaths , ratios, ...)
     kills_dict = dict(db_session.query(Player.pseudo, func.count(Kill.player_killed_id).label('kill_sum')).group_by(Player.pseudo).having(Kill.player_killer_id
                     !=
                     Kill.player_killed_id).join(Kill.player_killer).order_by(Player.pseudo))
@@ -61,6 +62,15 @@ def show_players_list():
     return render_template('home_page.html', top_players=top_players)
  
 
-@app.route('/playerdetails')
+@app.route('/playerdetails/<pseudo>')
 def show_player_details():
-    pass
+    #Accessing database for game historic
+    
+
+    #Route call for weapon graph generation
+
+@app.route('/weapongraph/<pseudo>')
+def generate_weapon_graph():
+    kill =
+    db_session.query(Kill.weapon_id).group_by(Kill.weapon_id).having(player_killer_id=pseudo)
+    print(kill)
