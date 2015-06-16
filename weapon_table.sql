@@ -1,0 +1,16 @@
+insert into weapon values (1,"Shotgun");
+insert into weapon values (2,"Gauntlet");
+insert into weapon values (3,"Machinegun");
+insert into weapon values (4,"Grenade_launcher");
+insert into weapon values (6,"Rocket");
+insert into weapon values (7,"Rocket");
+insert into weapon values (8,"Plasma");
+insert into weapon values (9,"Plasma");
+insert into weapon values (10,"Railgun");
+insert into weapon values (11,"Lightning");
+insert into weapon values (12,"BFG10K");
+insert into weapon values (13,"BFG10K");
+insert into weapon values (19,"Falling");
+insert into weapon values (22, "TRIGGER_HURT");
+insert into weapon values (18, "Telefrag");
+insert into weapon values (17,"Crush");
