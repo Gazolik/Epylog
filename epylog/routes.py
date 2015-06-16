@@ -2,7 +2,7 @@ from .model import engine, Base, Player, PlayerGame, Game, Kill, Weapon
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
-from sqlalchemy import func, 
+from sqlalchemy import func 
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -33,6 +33,8 @@ def home_page():
     top_players_sorted = sorted(top_players, key=lambda tup: tup[3],
                 reverse=True)
     top_players = top_players_sorted[0:3]
+
+    # game historic
     return render_template('home_page.html', top_players=top_players)
 
 
