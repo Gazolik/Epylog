@@ -1,15 +1,14 @@
-from .model import Game, Player, PlayerGame, connection, Kill
+from .model import Game, Player, PlayerGame, connection, Kill, Weapon
 
 
 current_game = Game(map_name=None, termination=None)
 player_game_list = {}  # (pseudo, player_game)
 player_id_matching = {}  # (id ingame du joueur, pseudo)
 player_id_matching['1022'] = 'world'
-weapon_id_matching = {10: 'Railgun', 6: 'Rocket',
-                      7: 'Rocket', 1: 'Shotgun',
-                      3: 'Machinegun', 8: 'Plasma',
-                      9: 'Plasma', 11: 'Lightning'}
-
+weapon_list = connection.query(Weapon).all()
+weapon_id_matching = {}
+for i in weapon_list:
+    weapon_id_matching[i.id] = i
 kills_list = []
 
 with open('logTest.log', 'r') as f:
@@ -27,13 +26,11 @@ with open('logTest.log', 'r') as f:
                     Player.pseudo == player_id_matching[id_killer]).first()
             kill.player_killed = connection.query(Player).filter(
                 Player.pseudo == player_id_matching[id_killed]).first()
-            #TODO : add weapons in kills
+            kill.weapon = weapon_id_matching[int(id_weapon)]
             kills_list.append(kill)
             if id_killer != id_killed and id_killer != '1022':
                 player_game_list[player_id_matching[id_killer]].kill += 1
                 player_game_list[player_id_matching[id_killer]].score += 1
-
-
             else:
                 player_game_list[player_id_matching[id_killed]].score -= 1
             player_game_list[player_id_matching[id_killed]].death += 1
@@ -60,6 +57,7 @@ with open('logTest.log', 'r') as f:
             for kill in kills_list:
                 connection.add(kill)
             connection.commit()
+            kills_list.clear()
             player_game_list.clear()
             player_id_matching['1022'] = 'world'
         elif splited_line[0] == 'ClientUserinfoChanged:':
@@ -75,7 +73,7 @@ with open('logTest.log', 'r') as f:
                 PlayerGame.game == current_game,
                 PlayerGame.player == player).first()
             if player_game is None:
-                player_game = PlayerGame(kill=0, death=0, score = 0)
+                player_game = PlayerGame(kill=0, death=0, score=0)
                 player_game.player = player
                 player_game.game = current_game
                 player_game_list[player.pseudo] = player_game
