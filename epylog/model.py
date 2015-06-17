@@ -1,5 +1,6 @@
-from sqlalchemy import Column, String, Integer, ForeignKey, create_engine, 
-from sqlalchemy.orm import relationship, backref, sessionmaker, scoped_session
+from sqlalchemy import (Column, String, Integer,
+                        ForeignKey, create_engine, DateTime)
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
@@ -80,6 +81,7 @@ class PlayerGame(Base):
     score = Column(Integer)
 
 
+
 class Kill(Base):
     __tablename__ = 'kill'
     id = Column(Integer, primary_key=True)
@@ -89,6 +91,7 @@ class Kill(Base):
     player_killed_id = Column(Integer, ForeignKey('player.id'))
     player_killed = relationship('Player', foreign_keys=[player_killed_id])
     weapon_id = Column(Integer, ForeignKey('weapon.id'))
+    time = Column(DateTime)
 
 
 class Game(Base):
@@ -96,8 +99,10 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     map_name = Column(String)
     termination = Column(String)
-    player_game = relationship('PlayerGame', backref='game')
+
     kills = relationship('Kill', backref='game')
+    starting_time = Column(DateTime)
+    ending_time = Column(DateTime)
 
 
 class Weapon(Base):
