@@ -1,11 +1,37 @@
-<!doctype html>
-<title>Flaskr</title>
-<body>
-  <ul class=players>
-  {% for top_player in top_players %}
-    <li><h2>{{ top_player }} </h2>
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
-  </ul>
-</body>
+{% extends "layout.html" %}
+{% block body %}
+<article>
+  <section>
+    <h3>Top players</h3>
+      <ol>
+      {%for player in top_players %}
+        <li>           
+          <h5><a href={{ url_for('show_player_details', pseudo=player.pseudo) }}>{{ player.pseudo }}</a></h5>
+            <dl>
+              <dt>
+                Total Kills :
+              </dt>
+              <dd>
+                {{ player.kill_sum }}
+              </dd>
+               <dt>
+                 Total Killed :
+              </dt>
+              <dd>
+                {{ player.killed_sum }}
+              </dd>
+              <dt>
+                Ratio k/k :
+              </dt>
+              <dd>
+                {{ player.ratio_kill_killed }}
+              </dd>
+            </dl>
+        </li>
+      {% endfor %}
+      </ol>
+  </section>
+  <section>
+  </section
+</article>
+{% endblock %}

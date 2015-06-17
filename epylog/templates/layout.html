@@ -1,0 +1,15 @@
+<!doctype html>
+<title>Epylog</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<head>
+  <h1>Epylog</h1>
+  <nav>
+    <ul>
+      <li><a href={{ url_for('home_page') }}>Home</a></li>
+      <li><a href={{ url_for('show_players_list') }}>Players</a></li>
+      <li><a href="/">Maps</a></li>
+      <li><a href="/">Games</a></li>
+    </ul>
+  </nav>
+</head>
+  {% block body %}{% endblock %}
