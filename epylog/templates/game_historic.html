@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Games historic</h2>
+<article>
+  <ul>
+  {%for game in game_historic %}
+    <li>
+      {{ game_info(game=game) }}
+    </li>
+  {% endfor %}    
+  </ul>
+</article>  
+{% endblock %}

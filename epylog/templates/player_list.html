@@ -1,34 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
+<h2>Players</h2>
 <article>
-  <h3>Players</h3>
-    <ol>
-    {%for player in top_players %}
-      <li>           
-        <h5><a href={{ url_for('show_player_details', pseudo=player[0]) }}>{{ player[0] }}</a></h5>
-          <dl>
-            <dt>
-              Total Kills :
-            </dt>
-            <dd>
-              {{ player[1] }}
-            </dd>
-             <dt>
-               Total Killed :
-            </dt>
-            <dd>
-              {{ player[2] }}
-            </dd>
-            <dt>
-              Ratio k/k :
-            </dt>
-            <dd>
-              {{ player[3] }}
-            </dd>
-          </dl>
-      </li>
-    {% endfor %}
-    </ol>
+  {%for player in top_players %}
+    <section>           
+      <h4><a href={{ url_for('show_player_details', pseudo=player.pseudo) }}>{{ player.pseudo }}</a></h4>
+      {{ player_info(player=player) }}
+    </section>
+  {% endfor %}
 </article>
 {% endblock %}
 
