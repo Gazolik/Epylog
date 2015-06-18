@@ -13,7 +13,7 @@ class Player(Base):
     __tablename__ = 'player'
     id = Column(Integer, primary_key=True)
     pseudo = Column(String)
-    
+
     @hybrid_property
     def kill_sum(self):
         return (
@@ -78,7 +78,7 @@ class Player(Base):
     @property
     def ratio_kill_death(self):
         return round((self.kill_sum or 0) / (self.death_sum or 1), 2)
-    
+
 
 class Kill(Base):
     __tablename__ = 'kill'
@@ -97,6 +97,7 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     map_name = Column(String)
     termination = Column(String)
+
     kills = relationship('Kill', backref='game')
     starting_time = Column(DateTime)
     ending_time = Column(DateTime)
@@ -109,14 +110,13 @@ class Weapon(Base):
     kills = relationship('Kill', backref='weapon')
 
 
-engine = create_engine('sqlite:////tmp/database')
-session = sessionmaker()
-session.configure(bind=engine)
+engine = create_engine('postgresql://epylog@localhost/epylog')
+
 Base.metadata.create_all(engine)
 connection = session()
 
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
-                bind=engine))
+                                         bind=engine))
 Base.query = db_session.query_property()
 
 
