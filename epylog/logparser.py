@@ -79,4 +79,5 @@ with open('timeStamp.log', 'r') as f:
                 player = Player(pseudo=name_player)
                 connection.add(player)
         elif splited_line[1] == 'ClientDisconnect:':
-            del player_id_matching[splited_line[2][0:-1]]
+            #del player_id_matching[splited_line[2][0:-1]]
+            print("")
