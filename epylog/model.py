@@ -111,7 +111,8 @@ class Weapon(Base):
 
 
 engine = create_engine('postgresql://epylog@localhost/epylog')
-
+session = sessionmaker(bind = engine)
+connection = session()
 Base.metadata.create_all(engine)
 connection = session()
 

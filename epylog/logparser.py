@@ -1,4 +1,4 @@
-from .model import Game, Player, engine, Kill, Weapon
+from .model import Game, Player, connection, Kill, Weapon
 import datetime
 import pyinotify
 import time
@@ -12,7 +12,9 @@ weapon_id_matching = {}
 
 kills_list = []
 lastExit = 0
-connection = None
+weapon_list = connection.query(Weapon).all()
+for i in weapon_list:
+    weapon_id_matching[i.id] = i
 try:
     lastDate = open('lastDate', 'r')
     lastExit = float(lastDate.readline())
@@ -25,13 +27,7 @@ else:
 
 
 def parser(line):
-    global connection
-    if connection is None:
-        session = sessionmaker(autoflush = False, bind = engine)
-        connection = session()
-        weapon_list = connection.query(Weapon).all()
-        for i in weapon_list:
-            weapon_id_matching[i.id] = i
+
     global lastExit
     global current_game
     splited_line = line.split(' ')
