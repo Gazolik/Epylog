@@ -1,6 +1,6 @@
 from sqlalchemy import (Column, String, Integer,
                         ForeignKey, create_engine, DateTime)
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
@@ -13,8 +13,7 @@ class Player(Base):
     __tablename__ = 'player'
     id = Column(Integer, primary_key=True)
     pseudo = Column(String)
-    player_game = relationship('PlayerGame', backref='player')
-    
+
     @hybrid_property
     def kill_sum(self):
         return (
@@ -64,22 +63,10 @@ class Player(Base):
     @property
     def ratio_kill_killed(self):
         return round((self.kill_sum or 0) / (self.killed_sum or 1), 2)
- 
+
     @property
     def ratio_kill_death(self):
         return round((self.kill_sum or 0) / (self.death_sum or 1), 2)
-    
-
-        
-
-class PlayerGame(Base):
-    __tablename__ = 'playergame'
-    game_id = Column(Integer, ForeignKey('game.id'), primary_key=True)
-    player_id = Column(Integer, ForeignKey('player.id'), primary_key=True)
-    kill = Column(Integer)
-    death = Column(Integer)
-    score = Column(Integer)
-
 
 
 class Kill(Base):
@@ -112,14 +99,10 @@ class Weapon(Base):
     kills = relationship('Kill', backref='weapon')
 
 
-engine = create_engine('sqlite:////tmp/database')
-session = sessionmaker()
-session.configure(bind=engine)
+engine = create_engine('postgresql://epylog@localhost/epylog')
+
 Base.metadata.create_all(engine)
-connection = session()
 
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
-                bind=engine))
+                                         bind=engine))
 Base.query = db_session.query_property()
-
-
