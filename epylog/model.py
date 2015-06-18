@@ -110,6 +110,8 @@ class Weapon(Base):
     kills = relationship('Kill', backref='weapon')
 
 
+
+
 engine = create_engine('postgresql://epylog@localhost/epylog')
 session = sessionmaker(bind = engine)
 connection = session()

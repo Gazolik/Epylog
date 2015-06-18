@@ -1,6 +1,6 @@
-from .model import Player, Game, Weapon, db_session
+from .model import Player, Game, Weapon, db_session, Kill
 from flask import Flask, render_template, make_response
-from sqlalchemy import desc 
+from sqlalchemy import desc, func 
 import pygal 
 
 app = Flask(__name__)
@@ -61,13 +61,19 @@ def show_map_list():
 def show_map_details():
     pass
                             
-@app.route('/gamehistoric')
-def show_game_historic():
-    game_historic = Game.query.order_by(desc(Game.ending_time))
-    return render_template('game_historic.html', game_historic=game_historic)
+@app.route('/gamehistory')
+def show_game_history():
+    game_history = Game.query.order_by(desc(Game.ending_time))
+    return render_template('game_history.html', game_history=game_history)
 
-@app.route('/weapon')
+@app.route('/weapons')
 def show_weapon_statistics():
-    pass
+   weapon_list = (db_session.query(Weapon.weapon_name,func.count(Weapon.weapon_name))
+                  .join(Weapon.kills)
+                  .filter(Kill.player_killer_id != Kill.player_killed_id)
+                  .group_by(Weapon.weapon_name))
+   for i in weapon_list:
+       print(i[1])
+   return render_template('weapons.html', weapon_list = weapon_list)
 
 

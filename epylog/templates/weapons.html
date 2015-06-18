@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Weapons</h2>
+<article>
+  {%for weapon in weapon_list %}
+    <section>           
+      <h4>{{ weapon.weapon_name }}</h4>
+	kill:{{ weapon[1] }}
+    </section>
+  {% endfor %}
+</article>
+{% endblock %}
