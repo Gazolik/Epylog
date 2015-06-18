@@ -100,7 +100,8 @@ class Weapon(Base):
 
 
 engine = create_engine('postgresql://epylog@localhost/epylog')
-
+session = sessionmaker(autoflush = False, bind = engine)
+connection = session()
 Base.metadata.create_all(engine)
 
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
