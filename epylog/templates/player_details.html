@@ -1,41 +1,27 @@
 {% extends "layout.html" %}
 {% block body %}
+<h2>{{ player.pseudo }} details</h2>
+<article>
+  <h3>General statistics</h3>
   <dl>
-    <dt>
-      Total Kills :
-    </dt>
-    <dd>
-      {{ player.kill_sum }}
-    </dd>
-     <dt>
-       Total Killed :
-    </dt>
-    <dd>
-      {{ player.killed_sum }}
-    </dd>
-    <dt>
-       Total Deaths :
-    </dt>
-    <dd>
-      {{ player.death_sum }}
-    </dd>
-    <dt>
-      Ratio k/k :
-    </dt>
-    <dd>
-      {{ player.ratio_kill_killed }}
-    </dd>
-    <dt>
-       Ratio k/d :
-    </dt>
-    <dd>
-      {{ player.ratio_kill_death }}
-    </dd>
-    <dt>
-        Favorite weapon:
-    </dt>
-    <dd>
-      
-    </dd>
+    <dt> Total Kills </dt>
+    <dd> {{ player.kill_sum }} </dd>
+    <dt> Total Killed </dt>
+    <dd> {{ player.killed_sum }} </dd>
+    <dt> Total Deaths </dt>
+    <dd> {{ player.death_sum }} </dd>
+    <dt> Ratio k/k </dt>
+    <dd> {{ player.ratio_kill_killed }} </dd>
+    <dt> Ratio k/d </dt>
+    <dd> {{ player.ratio_kill_death }} </dd>
+    <dt> Total game played </dt>
+    <dd> {{ player.total_game_played }} </dd>
+    <dt> Favorite weapon </dt>
+    <dd> {{ player.favorite_weapon.weapon_name }} </dd>
   </dl>
+</article>
+<article>
+  <h3>{{ player.pseudo }} weapon use</h3>
+  <embed src="{{ url_for('generate_weapon_graph', pseudo=player.pseudo) }}" />
+</article>
 {% endblock %}

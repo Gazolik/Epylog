@@ -3,7 +3,7 @@ from sqlalchemy import (Column, String, Integer,
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from operator import itemgetter
 
 Base = declarative_base()
@@ -47,23 +47,34 @@ class Player(Base):
             )
 
     @hybrid_property
-    def weapon_statitics(self):
+    def weapon_statistics(self):
         return (
             db_session
             .query(Kill.weapon_id, func.count(Kill.weapon_id))
-            .filter_by(player_killed_id=self.id)
+            .filter_by(player_killer_id=self.id)
+            .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
             )
 
     @hybrid_property
     def favorite_weapon(self):
-        w_id = max(self.weapon_statistic, key=itemgetter(1))[0]
-        return Weapon.query.filter(id=w_id).one()
+        w_id = max(self.weapon_statistics, key=itemgetter(1))[0]
+        return Weapon.query.get(w_id)
+    
+    @hybrid_property
+    def total_game_played(self):
+        return (
+            Kill.query
+            .filter(or_(Kill.player_killer_id == self.id,
+                Kill.player_killed_id == self.id))
+            .count()
+            )
+
 
     @property
     def ratio_kill_killed(self):
         return round((self.kill_sum or 0) / (self.killed_sum or 1), 2)
-
+ 
     @property
     def ratio_kill_death(self):
         return round((self.kill_sum or 0) / (self.death_sum or 1), 2)
@@ -103,7 +114,10 @@ engine = create_engine('postgresql://epylog@localhost/epylog')
 session = sessionmaker(bind = engine)
 connection = session()
 Base.metadata.create_all(engine)
+connection = session()
 
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
                                          bind=engine))
 Base.query = db_session.query_property()
+
+

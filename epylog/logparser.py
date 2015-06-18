@@ -7,7 +7,9 @@ from sqlalchemy.orm import sessionmaker
 current_game = Game(map_name=None, termination=None)
 player_id_matching = {}  # (id ingame du joueur, pseudo)
 player_id_matching['1022'] = 'world'
+
 weapon_id_matching = {}
+
 kills_list = []
 lastExit = 0
 weapon_list = connection.query(Weapon).all()

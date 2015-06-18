@@ -1,15 +1,58 @@
 <!doctype html>
-<title>Epylog</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<head>
-  <h1>Epylog</h1>
-  <nav>
-    <ul>
-      <li><a href={{ url_for('home_page') }}>Home</a></li>
-      <li><a href={{ url_for('show_players_list') }}>Players</a></li>
-      <li><a href="/">Maps</a></li>
-      <li><a href="/">Games</a></li>
-    </ul>
-  </nav>
-</head>
-  {% block body %}{% endblock %}
+
+{% macro player_info(player) -%}
+<dl>
+  <dt> Total Kills </dt>
+  <dd> {{ player.kill_sum }} </dd>
+  <dt> Total Killed </dt>
+  <dd> {{ player.killed_sum }} </dd>
+  <dt> Ratio k/k </dt>
+  <dd> {{ player.ratio_kill_killed }} </dd>
+</dl>
+{%- endmacro %}
+
+{% macro game_info(game) -%}
+<dl> 
+  <dt> Map </dt>
+  <dd> {{ game.map_name }} </dd>
+  <dt> Starded <dt>
+  <dd> 
+    <time itemprop="Started"> 
+      {{ game.starting_time }}
+    </time>
+  </dd> 
+  <dt> Ended <dt>
+  <dd>
+    <time itemprop="Ended">
+      {{ game.ending_time }}
+    </time>
+  </dd> 
+  <dt> Termination </dt>
+  <dd> {{ game.termination }} </dd>
+</dl>
+{%- endmacro %}
+
+<html>
+  <head>
+    <title>Epylog</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <header>
+      <h1>Epylog</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href={{ url_for('home_page') }}>Home</a></li>
+        <li><a href={{ url_for('show_players_list') }}>Players</a></li>
+        <li><a href={{ url_for('show_map_list') }}>Maps</a></li>
+        <li><a href={{ url_for('show_game_historic') }}>Games</a></li>
+      </ul>
+    </nav>
+    <main>
+      {% block body %}{% endblock %}
+    </main>
+  </body>
+</html>
+
+
