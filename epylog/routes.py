@@ -6,6 +6,7 @@ import pygal
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+
 @app.route('/')
 def home_page():
     top_players = Player.query.all()
@@ -30,8 +31,6 @@ def show_players_list():
 @app.route('/playerdetails/<pseudo>')
 def show_player_details(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first()
-    # Accessing database for game history
-    # Route call for weapon graph generation
     return render_template('player_details.html', player=player)
 
 
@@ -52,19 +51,12 @@ def generate_weapon_graph(pseudo):
     return response
 
 
-@app.route('/map_list/')
-def show_map_list():
-    map_list = db_session.query(Game.map_name).group_by(Game.map_name)
-    # interesting stats : -most deadly weapon, avg game duration, 
-
-@app.route('/map_details/<map_name>')
-def show_map_details():
-    pass
-                            
 @app.route('/gamehistory')
 def show_game_history():
     game_history = Game.query.order_by(desc(Game.ending_time))
     return render_template('game_history.html', game_history=game_history)
+
+
 
 @app.route('/weapons')
 def show_weapon_statistics():

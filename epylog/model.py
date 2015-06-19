@@ -50,27 +50,85 @@ class Player(Base):
     def weapon_statistics(self):
         return (
             db_session
-            .query(Kill.weapon_id, func.count(Kill.weapon_id))
+            .query(Kill.weapon_id,
+            func.count(Kill.weapon_id).label('kill_count'))
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
+            .order_by('kill_count desc')
+            .all()
             )
 
-    @hybrid_property
     def favorite_weapon(self):
-        w_id = max(self.weapon_statistics, key=itemgetter(1))[0]
-        return Weapon.query.get(w_id)
-    
+        if self.weapon_statistics:
+            return Weapon.query.get(self.weapon_statistics[0][0])
+        else:
+            return None
+
     @hybrid_property
     def total_game_played(self):
         return (
             Kill.query
             .filter(or_(Kill.player_killer_id == self.id,
                 Kill.player_killed_id == self.id))
+            .group(Kill.game_id)
             .count()
             )
 
+    def most_killed_player(self):
+        player = (
+                db_session
+                .query(Kill.player_killed_id,
+                    func.count(Kill.player_killed_id).label('kill_count'))
+                .filter_by(player_killer_id=self.id)
+                .filter(Kill.player_killer_id != Kill.player_killed_id)
+                .group_by(Kill.player_killed_id)
+                .order_by('kill_count desc').first()
+                )
+        if player: 
+            return Player.query.get(player[0])
+        else:
+            return None
 
+    def most_killed_by_player(self):
+        player = (
+                db_session
+                .query(Kill.player_killer_id, 
+                    func.count(Kill.player_killer_id).label('kill_count'))
+                .filter_by(player_killed_id=self.id)
+                .filter(Kill.player_killer_id != Kill.player_killed_id)
+                .group_by(Kill.player_killer_id)
+                .order_by('kill_count desc').first()
+                )
+        if player: 
+            return Player.query.get(player[0])
+        else:
+            return None
+
+    def kill_list(self, number=None):
+        return [p.pseudo for p in (
+            db_session
+            .query(Player.pseudo)
+            .select_from(Kill)
+            .join(Kill.player_killed)
+            .filter(Kill.player_killer_id == self.id)
+            .order_by(Kill.time.desc())
+            .limit(number)
+            .all())
+            ]
+
+    def killed_list(self, number=None):
+        return [p.pseudo for p in (
+            db_session
+            .query(Player.pseudo)
+            .select_from(Kill)
+            .join(Kill.player_killer)
+            .filter(Kill.player_killed_id == self.id)
+            .order_by(Kill.time.desc())
+            .limit(number)
+            .all())
+            ]
+        
     @property
     def ratio_kill_killed(self):
         return round((self.kill_sum or 0) / (self.killed_sum or 1), 2)
@@ -97,7 +155,6 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     map_name = Column(String)
     termination = Column(String)
-
     kills = relationship('Kill', backref='game')
     starting_time = Column(DateTime)
     ending_time = Column(DateTime)

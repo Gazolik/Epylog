@@ -17,8 +17,27 @@
     <dt> Total game played </dt>
     <dd> {{ player.total_game_played }} </dd>
     <dt> Favorite weapon </dt>
-    <dd> {{ player.favorite_weapon.weapon_name }} </dd>
+    <dd> {{ player.favorite_weapon().weapon_name }} </dd>
+    <dt> Most killed player </dt>
+    <dd> {{ player.most_killed_player().pseudo }} </dd>
+    <dt> Most killed by player </dt>
+    <dd> {{ player.most_killed_by_player().pseudo }} </dd>
   </dl>
+</article>
+<article>
+  <h3>Last kill</h3>
+    <ul>
+    {% for kill in player.kill_list(5) %}
+      <li><a href={{ url_for('show_player_details', pseudo=kill) }}>{{ kill }}</a></li>
+    {% endfor %}
+    </ul>
+</article>
+<article>
+    <ul>
+    {% for killed in player.killed_list(5) %}
+      <li><a href={{ url_for('show_player_details', pseudo=killed) }}>{{ killed }}</a></li>
+    {% endfor %}
+    </ul>
 </article>
 <article>
   <h3>{{ player.pseudo }} weapon use</h3>
