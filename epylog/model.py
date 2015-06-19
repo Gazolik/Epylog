@@ -4,7 +4,6 @@ from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func, or_
-from operator import itemgetter
 
 Base = declarative_base()
 
