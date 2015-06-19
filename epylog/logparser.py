@@ -1,8 +1,7 @@
 from .model import Game, Player, connection, Kill, Weapon
 import datetime
 import pyinotify
-import time
-from sqlalchemy.orm import sessionmaker
+
 
 current_game = Game(map_name=None, termination=None)
 player_id_matching = {}  # (id ingame du joueur, pseudo)
@@ -11,28 +10,28 @@ player_id_matching['1022'] = 'world'
 weapon_id_matching = {}
 
 kills_list = []
-lastExit = 0
+last_exit = 0
 weapon_list = connection.query(Weapon).all()
 for i in weapon_list:
     weapon_id_matching[i.id] = i
 try:
-    lastDate = open('lastDate', 'r')
-    lastExit = float(lastDate.readline())
-    print('Last exit : '+str(lastExit))
+    last_date = open('last_date', 'r')
+    last_exit = float(last_date.readline())
+    print('Last exit : '+str(last_exit))
 except IOError:
-    lastExit = 0
+    last_exit = 0
     print('file doesn t exist')
 else:
-    lastDate.close()
+    last_date.close()
 
 
 def parser(line):
 
-    global lastExit
+    global last_exit
     global current_game
     splited_line = line.split(' ')
     time = float(splited_line[0])
-    if(time <= lastExit):
+    if(time <= last_exit):
         return
     timestamp = datetime.datetime.fromtimestamp(time)
     if splited_line[1] == 'Kill:':
@@ -75,9 +74,9 @@ def parser(line):
         connection.commit()
         kills_list.clear()
         player_id_matching['1022'] = 'world'
-        with open('lastDate', 'w') as lastDate:
-            lastDate.write(splited_line[0])
-        lastExit = float(splited_line[0])
+        with open('last_date', 'w') as last_date:
+            last_date.write(splited_line[0])
+        last_exit = float(splited_line[0])
     elif splited_line[1] == 'ClientUserinfoChanged:':
         ingame_id = splited_line[2]
         name_player = line.split('\\')[1]

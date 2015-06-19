@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func, or_
 
+
 Base = declarative_base()
 
 
@@ -54,8 +55,10 @@ class Player(Base):
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
-            .order_by('kill_count desc').all()
+            .order_by('kill_count desc')
+            .all()
             )
+
 
     def favorite_weapon(self):
         if self.weapon_statistics:
@@ -153,6 +156,7 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     map_name = Column(String)
     termination = Column(String)
+
     kills = relationship('Kill', backref='game')
     starting_time = Column(DateTime)
     ending_time = Column(DateTime)
@@ -168,7 +172,7 @@ class Weapon(Base):
 
 
 engine = create_engine('postgresql://epylog@localhost/epylog')
-session = sessionmaker(bind = engine)
+session = sessionmaker(bind=engine)
 connection = session()
 Base.metadata.create_all(engine)
 connection = session()
