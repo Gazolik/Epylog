@@ -56,12 +56,11 @@ class Player(Base):
             .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
             .order_by('kill_count desc')
+            .all()
             )
 
-    @hybrid_property
     def favorite_weapon(self):
         if self.weapon_statistics:
-            pass
             return Weapon.query.get(self.weapon_statistics[0][0])
         else:
             return None
@@ -72,6 +71,7 @@ class Player(Base):
             Kill.query
             .filter(or_(Kill.player_killer_id == self.id,
                 Kill.player_killed_id == self.id))
+            .group(Kill.game_id)
             .count()
             )
 
@@ -85,7 +85,6 @@ class Player(Base):
                 .group_by(Kill.player_killed_id)
                 .order_by('kill_count desc').first()
                 )
-        
         if player: 
             return Player.query.get(player[0])
         else:

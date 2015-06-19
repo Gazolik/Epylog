@@ -31,7 +31,6 @@ def show_players_list():
 @app.route('/playerdetails/<pseudo>')
 def show_player_details(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first()
-
     return render_template('player_details.html', player=player)
 
 
