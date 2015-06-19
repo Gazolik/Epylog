@@ -12,7 +12,7 @@ Base = declarative_base()
 class Player(Base):
     __tablename__ = 'player'
     id = Column(Integer, primary_key=True)
-    pseudo = Column(String)
+    pseudo = Column(String, unique=True)
 
     @hybrid_property
     def kill_sum(self):
@@ -166,6 +166,8 @@ class Weapon(Base):
     id = Column(Integer, primary_key=True)
     weapon_name = Column(String)
     kills = relationship('Kill', backref='weapon')
+
+
 
 
 engine = create_engine('postgresql://epylog@localhost/epylog')
