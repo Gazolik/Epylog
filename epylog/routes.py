@@ -50,7 +50,7 @@ def generate_weapon_graph(pseudo):
     response.content_type = 'image/svg+xml'
     return response
 
-@app.route('ratiograph/<pseudo.svg>')
+@app.route('/ratiograph/<pseudo>.svg')
 def generate_ratiograph(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first() 
 
