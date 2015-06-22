@@ -8,6 +8,8 @@
   <dd> {{ player.killed_sum }} </dd>
   <dt> Ratio k/k </dt>
   <dd> {{ player.ratio_kill_killed }} </dd>
+  <dt> Total game won</dt>
+  <dd> {{ player.win_number() }} </dd>
 </dl>
 {%- endmacro %}
 
@@ -27,6 +29,8 @@
       {{ game.ending_time }}
     </time>
   </dd> 
+  <dt> Winner </dt>
+  <dd> {{ game.winner_name() }} </dd>
   <dt> Termination </dt>
   <dd> {{ game.termination }} </dd>
 </dl>

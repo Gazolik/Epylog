@@ -3,7 +3,8 @@ import datetime
 import pyinotify
 
 
-current_game = Game(map_name=None, termination=None)
+file_name = "timeStamp.log"
+current_game = Game(map_name=None, termination=None, winner = None)
 player_id_matching = {}  # (id ingame du joueur, pseudo)
 player_id_matching['1022'] = 'world'
 
@@ -17,15 +18,15 @@ for i in weapon_list:
 try:
     last_date = open('last_date', 'r')
     last_exit = float(last_date.readline())
-    print('Last exit : '+str(last_exit))
+    print('Last exit : {}'.format(last_exit))
 except IOError:
     last_exit = 0
-    print('file doesn t exist')
+    print('date file doesn t exist, reading the whole file')
 else:
     last_date.close()
 
 
-def parser(line):
+def parser(line, f):
 
     global last_exit
     global current_game
@@ -66,7 +67,11 @@ def parser(line):
         connection.add(current_game)
     elif splited_line[1] == 'Exit:':
         end = splited_line[2]
-        print('Exit')
+        line = f.readline()
+        winner_id = line.split(' ')[8]
+        winner = connection.query(Player).filter(
+            Player.pseudo == player_id_matching[winner_id]).first()
+        current_game.winner = winner
         current_game.termination = end
         current_game.ending_time = timestamp
         for kill in kills_list:
@@ -89,7 +94,6 @@ def parser(line):
 
 
 wm = pyinotify.WatchManager()
-file_name = "timeStamp.log"
 
 
 class EventHandler(pyinotify.ProcessEvent):
@@ -105,8 +109,7 @@ class EventHandler(pyinotify.ProcessEvent):
                             f.seek(self.where)
                             self.where = f.tell()
                         for line in f:
-                            print('nouvelle ligne')
-                            parser(line)
+                            parser(line, f)
 
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
@@ -115,6 +118,5 @@ wm.add_watch(file_name, pyinotify.IN_MODIFY, rec=True)
 
 with open(file_name, 'r') as f:
     for line in f:
-        parser(line)
-
+        parser(line, f)
     EventHandler.where = f.tell()

@@ -7,6 +7,7 @@ from sqlalchemy import func, or_
 
 
 Base = declarative_base()
+engine_name = 'postgresql://epylog@localhost/epylog'
 
 
 class Player(Base):
@@ -51,14 +52,13 @@ class Player(Base):
         return (
             db_session
             .query(Kill.weapon_id,
-            func.count(Kill.weapon_id).label('kill_count'))
+                   func.count(Kill.weapon_id).label('kill_count'))
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
             .order_by('kill_count desc')
             .all()
             )
-
 
     def favorite_weapon(self):
         if self.weapon_statistics:
@@ -71,7 +71,7 @@ class Player(Base):
         return (
             Kill.query
             .filter(or_(Kill.player_killer_id == self.id,
-                Kill.player_killed_id == self.id))
+                        Kill.player_killed_id == self.id))
             .group(Kill.game_id)
             .count()
             )
@@ -80,13 +80,13 @@ class Player(Base):
         player = (
                 db_session
                 .query(Kill.player_killed_id,
-                    func.count(Kill.player_killed_id).label('kill_count'))
+                       func.count(Kill.player_killed_id).label('kill_count'))
                 .filter_by(player_killer_id=self.id)
                 .filter(Kill.player_killer_id != Kill.player_killed_id)
                 .group_by(Kill.player_killed_id)
                 .order_by('kill_count desc').first()
                 )
-        if player: 
+        if player:
             return Player.query.get(player[0])
         else:
             return None
@@ -94,14 +94,14 @@ class Player(Base):
     def most_killed_by_player(self):
         player = (
                 db_session
-                .query(Kill.player_killer_id, 
-                    func.count(Kill.player_killer_id).label('kill_count'))
+                .query(Kill.player_killer_id,
+                       func.count(Kill.player_killer_id).label('kill_count'))
                 .filter_by(player_killed_id=self.id)
                 .filter(Kill.player_killer_id != Kill.player_killed_id)
                 .group_by(Kill.player_killer_id)
                 .order_by('kill_count desc').first()
                 )
-        if player: 
+        if player:
             return Player.query.get(player[0])
         else:
             return None
@@ -129,14 +129,24 @@ class Player(Base):
             .limit(number)
             .all())
             ]
-        
+
     @property
     def ratio_kill_killed(self):
         return round((self.kill_sum or 0) / (self.killed_sum or 1), 2)
- 
+
     @property
     def ratio_kill_death(self):
         return round((self.kill_sum or 0) / (self.death_sum or 1), 2)
+
+    def win_number(self):
+        query = (db_session.query(func.count(Game.winner_id))
+                 .group_by(Game.winner_id)
+                 .having(Game.winner_id == self.id)
+                 .first())
+        if query is not None:
+            return query[0]
+        else:
+            return 0
 
 
 class Kill(Base):
@@ -156,10 +166,15 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     map_name = Column(String)
     termination = Column(String)
-
     kills = relationship('Kill', backref='game')
     starting_time = Column(DateTime)
     ending_time = Column(DateTime)
+    winner_id = Column(Integer, ForeignKey('player.id'))
+    winner = relationship('Player', foreign_keys=[winner_id])
+
+    def winner_name(self):
+        return (db_session.query(Player.pseudo)
+                .join(Game, Player.id == self.winner_id).first()[0])
 
 
 class Weapon(Base):
@@ -169,9 +184,7 @@ class Weapon(Base):
     kills = relationship('Kill', backref='weapon')
 
 
-
-
-engine = create_engine('postgresql://epylog@localhost/epylog')
+engine = create_engine(engine_name)
 session = sessionmaker(bind=engine)
 connection = session()
 Base.metadata.create_all(engine)
@@ -180,5 +193,3 @@ connection = session()
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
                                          bind=engine))
 Base.query = db_session.query_property()
-
-
