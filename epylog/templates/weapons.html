@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
 <h2>Weapons</h2>
-  <article>
+  <article class="weapons">
     <embed src = "{{ url_for('generate_all_weapons_graph') }}"/>
   </article>
-  <article>
+  <article class="weapons">
     {%for weapon in best_player_weapon %}
     <section>
       <dl>
