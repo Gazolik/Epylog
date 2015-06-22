@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method
 from sqlalchemy import func, or_
 import datetime
+from .config import engine_name
 
 Base = declarative_base()
 
@@ -94,10 +95,6 @@ class Player(Base):
                 .order_by('kill_count desc')
                 .first()
                 )
-<<<<<<< HEAD
-
-=======
->>>>>>> b6814640242ab033c941a49148d8838e845eb0c7
         return player
 
     @property
@@ -148,10 +145,6 @@ class Player(Base):
     @hybrid_method
     def ratio_kill_death(self, date=datetime.datetime.max):
         return round((self.kill_sum(date) or 0) / (self.death_sum(date) or 1), 2)
-<<<<<<< HEAD
-=======
-    
->>>>>>> b6814640242ab033c941a49148d8838e845eb0c7
 
     @property
     def win_number(self):
