@@ -11,7 +11,7 @@ app.config.from_object(__name__)
 def home_page():
     top_players = Player.query.all()
     sorted_players = sorted(
-        top_players, key=lambda p: p.ratio_kill_killed, reverse=True)
+        top_players, key=lambda p: p.ratio_kill_killed(), reverse=True)
     game_history = Game.query.order_by(desc(Game.ending_time)).limit(5)
     return render_template(
         'home_page.html',
@@ -24,15 +24,13 @@ def home_page():
 def show_players_list():
     top_players = Player.query.all()
     sorted_players = sorted(
-        top_players, key=lambda p: p.ratio_kill_killed, reverse=True)
+        top_players, key=lambda p: p.ratio_kill_killed(), reverse=True)
     return render_template('player_list.html', top_players=sorted_players)
 
 
 @app.route('/playerdetails/<pseudo>')
 def show_player_details(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first()
-    # Accessing database for game history
-    # Route call for weapon graph generation
     return render_template('player_details.html', player=player)
 
 
@@ -51,6 +49,10 @@ def generate_weapon_graph(pseudo):
     response = make_response(svg)
     response.content_type = 'image/svg+xml'
     return response
+
+@app.route('/ratiograph/<pseudo>.svg')
+def generate_ratiograph(pseudo):
+    player = Player.query.filter_by(pseudo=pseudo).first() 
 
 
 @app.route('/gamehistory')
