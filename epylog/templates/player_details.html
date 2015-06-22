@@ -45,11 +45,11 @@
     </ul>
 </article>
 <article>
-  <h3>{{ player.pseudo }} weapon use</h3>
+  <h3>{{ player.pseudo|process_color|safe }} weapon use</h3>
   <embed src="{{ url_for('generate_weapon_graph', pseudo=player.pseudo) }}" />
 </article>
 <article>
-  <h3>{{ player.pseudo }} ratio </h3>
+  <h3>{{ player.pseudo|process_color|safe }} ratio </h3>
   <embed src="{{ url_for('generate_ratio_graph', pseudo=player.pseudo) }}" />
 </article>
 {% endblock %}

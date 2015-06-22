@@ -2,6 +2,7 @@ from .config import engine_name
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, exc
 
+
 engine = create_engine(engine_name)
 session = sessionmaker(bind=engine)
 connection = session()

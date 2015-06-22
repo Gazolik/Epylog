@@ -1,20 +1,22 @@
 {% extends "layout.html" %}
 {% block body %}
 <h2>Weapons</h2>
-  <article>
-    <embed src = "{{ url_for('generate_all_weapons_graph') }}"/>
-  </article>
-  <article>
-    {%for weapon in best_player_weapon %}
-    <section>
-      <dl>
-        <dt>{{ weapon.weapon }}</dt>
-        <dd>
-          <p>Total kills {{ weapon.total }}</p>
-          <p>Best player {{ weapon.pseudo|process_color|safe }} with {{ weapon.kill }} kills</p>
-        </dd>
-      </dl>
-    <section>
-    {% endfor %}
-  </article>
-  {% endblock %}
+<article>
+  <embed src = "{{ url_for('generate_all_weapons_graph') }}"/>
+  {% for weapon in best_player_weapon %}
+  <section>
+    <dl>
+      <dt>{{ weapon.weapon }}</dt>
+      <dd>
+        <dl>
+          <dt>Total kills</dt>
+          <dd>{{ weapon.total }}</dd>
+          <dt>Best player</dt>
+          <dd>{{ weapon.pseudo|process_color|safe }} with {{ weapon.kill }} kills</dd>
+        </dl>
+      </dd>
+    </dl>
+  </section>
+  {% endfor %}
+</article>
+{% endblock %}
