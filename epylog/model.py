@@ -15,7 +15,7 @@ class Player(Base):
     __tablename__ = 'player'
     id = Column(Integer, primary_key=True)
     pseudo = Column(String, unique=True)
-    
+
     @hybrid_method
     def kill_sum(self, date=datetime.datetime.max):
         return (
@@ -23,19 +23,19 @@ class Player(Base):
             .query(func.count(Kill.player_killed_id))
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killer_id != Kill.player_killed_id)
-            .filter(Kill.time < date)
+            .filter(Kill.time <= date)
             .group_by(Kill.player_killer_id)
             .scalar()
             )
 
-    @hybrid_method    
+    @hybrid_method   
     def killed_sum(self, date=datetime.datetime.max):
         return (
             db_session
             .query(func.count(Kill.player_killer_id))
             .filter_by(player_killed_id=self.id)
             .filter(Kill.player_killer_id != Kill.player_killed_id)
-            .filter(Kill.time < date)
+            .filter(Kill.time <= date)
             .group_by(Kill.player_killed_id)
             .scalar()
             )
@@ -46,7 +46,7 @@ class Player(Base):
             db_session
             .query(func.count(Kill.player_killer_id))
             .filter_by(player_killed_id=self.id)
-            .filter(Kill.time < date)
+            .filter(Kill.time <= date)
             .group_by(Kill.player_killed_id)
             .scalar()
             )
@@ -70,7 +70,6 @@ class Player(Base):
             return Weapon.query.get(self.weapon_statistics[0][0])
         else:
             return None
-
 
     @property
     def total_game_played(self):

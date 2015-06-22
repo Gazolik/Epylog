@@ -1,6 +1,6 @@
 from .model import Player, Game, Weapon, db_session, Kill
 from flask import Flask, render_template, make_response
-from sqlalchemy import desc, func, and_
+from sqlalchemy import desc, func, and_, or_
 import pygal
 
 app = Flask(__name__)
@@ -50,9 +50,33 @@ def generate_weapon_graph(pseudo):
     response.content_type = 'image/svg+xml'
     return response
 
+
 @app.route('/ratiograph/<pseudo>.svg')
-def generate_ratiograph(pseudo):
-    player = Player.query.filter_by(pseudo=pseudo).first() 
+def generate_ratio_graph(pseudo):
+    player = Player.query.filter_by(pseudo=pseudo).first()
+    labels = []
+    values = []
+    games = (
+        db_session
+        .query(Kill.game_id)
+        .filter(or_(Kill.player_killer_id == player.id, 
+            Kill.player_killed_id == player.id))
+        .group_by(Kill.game_id)
+        .all()
+        )
+    for row in games:
+        game = Game.query.get(row.game_id)
+        labels.append(game.ending_time)
+        values.append(player.ratio_kill_killed(game.ending_time))
+    line_chart = pygal.Line()
+    line_chart.title = 'Ratio evolution'
+    line_chart.x_labels = map(str, labels)
+    line_chart.add('ratio k/k', values)
+    svg = line_chart.render()
+    response = make_response(svg)
+    response.content_type = 'image/svg+xml'
+    return response
+
 
 
 @app.route('/gamehistory')
