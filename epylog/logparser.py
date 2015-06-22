@@ -51,9 +51,10 @@ def parser(line, f):
         kill.weapon = weapon_id_matching[int(id_weapon)]
         kills_list.append(kill)
     elif splited_line[1] == 'Item:':
-        id_looter = splited_line[2]
-        name_item = splited_line[3][0:-1]
-        name_player = player_id_matching[id_looter]
+        pass
+        #id_looter = splited_line[2]
+        #name_item = splited_line[3][0:-1]
+        #name_player = player_id_matching[id_looter]
     elif splited_line[1] in ('Rcon', 'InitGame:'):
         connection.rollback()
         kills_list.clear()
