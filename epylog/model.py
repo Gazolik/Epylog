@@ -28,7 +28,7 @@ class Player(Base):
             .scalar()
             )
 
-    @hybrid_method   
+    @hybrid_method
     def killed_sum(self, date=datetime.datetime.max):
         return (
             db_session
@@ -39,7 +39,7 @@ class Player(Base):
             .group_by(Kill.player_killed_id)
             .scalar()
             )
-    
+
     @hybrid_method
     def death_sum(self, date=datetime.datetime.max):
         return (
@@ -56,7 +56,7 @@ class Player(Base):
         return (
             db_session
             .query(Kill.weapon_id,
-            func.count(Kill.weapon_id).label('kill_count'))
+                func.count(Kill.weapon_id).label('kill_count'))
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
@@ -95,14 +95,13 @@ class Player(Base):
                 .order_by('kill_count desc')
                 .first()
                 )
-        
         return player
 
     @property
     def most_killed_by_player(self):
         player = (
                 db_session
-                .query(Player.pseudo, 
+                .query(Player.pseudo,
                     func.count(Kill.player_killer_id).label('kill_count'))
                 .filter(Player.id == Kill.player_killer_id)
                 .filter(Kill.player_killed_id == self.id)
@@ -125,7 +124,7 @@ class Player(Base):
             .limit(number)
             .all())
             ]
-    
+
     @hybrid_method
     def killed_list(self, number=None):
         return [p.pseudo for p in (
@@ -138,15 +137,15 @@ class Player(Base):
             .limit(number)
             .all())
             ]
-    
-    @hybrid_method    
+
+    @hybrid_method
     def ratio_kill_killed(self, date=datetime.datetime.max):
         return round((self.kill_sum(date) or 0) / (self.killed_sum(date) or 1), 2)
-    
-    @hybrid_method 
+
+    @hybrid_method
     def ratio_kill_death(self, date=datetime.datetime.max):
         return round((self.kill_sum(date) or 0) / (self.death_sum(date) or 1), 2)
-    
+
     @property
     def win_number(self):
         query = (db_session.query(func.count(Game.winner_id))
@@ -207,5 +206,3 @@ connection = session()
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
                                          bind=engine))
 Base.query = db_session.query_property()
-
-

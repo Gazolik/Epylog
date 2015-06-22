@@ -59,7 +59,7 @@ def generate_ratio_graph(pseudo):
     games = (
         db_session
         .query(Kill.game_id)
-        .filter(or_(Kill.player_killer_id == player.id, 
+        .filter(or_(Kill.player_killer_id == player.id,
             Kill.player_killed_id == player.id))
         .group_by(Kill.game_id)
         .all()
