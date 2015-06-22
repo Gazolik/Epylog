@@ -1,4 +1,3 @@
-insert into weapon values (0,'Unknow');
 insert into weapon values (1,'Shotgun');
 insert into weapon values (2,'Gauntlet');
 insert into weapon values (3,'Machinegun');

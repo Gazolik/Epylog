@@ -5,10 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method
 from sqlalchemy import func, or_
 import datetime
-
+from .config import engine_name as engine_name
 
 Base = declarative_base()
-engine_name = 'postgresql://epylog@localhost/epylog'
 
 
 class Player(Base):
@@ -70,6 +69,7 @@ class Player(Base):
             return Weapon.query.get(self.weapon_statistics[0][0])
         else:
             return None
+
 
     @property
     def total_game_played(self):
@@ -145,6 +145,7 @@ class Player(Base):
     @hybrid_method
     def ratio_kill_death(self, date=datetime.datetime.max):
         return round((self.kill_sum(date) or 0) / (self.death_sum(date) or 1), 2)
+    
 
     @property
     def win_number(self):
@@ -206,3 +207,5 @@ connection = session()
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
                                          bind=engine))
 Base.query = db_session.query_property()
+
+
