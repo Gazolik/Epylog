@@ -75,10 +75,11 @@ class Player(Base):
     @property
     def total_game_played(self):
         return (
-            Kill.query
+            db_session
+            .query(Kill.game_id)
             .filter(or_(Kill.player_killer_id == self.id,
                 Kill.player_killed_id == self.id))
-            .group(Kill.game_id)
+            .group_by(Kill.game_id)
             .count()
             )
 
@@ -147,7 +148,8 @@ class Player(Base):
     def ratio_kill_death(self, date=datetime.datetime.max):
         return round((self.kill_sum(date) or 0) / (self.death_sum(date) or 1), 2)
 
-    ef win_number(self):
+    @property
+    def win_number(self):
         query = (db_session.query(func.count(Game.winner_id))
                  .group_by(Game.winner_id)
                  .having(Game.winner_id == self.id)
@@ -175,7 +177,6 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     map_name = Column(String)
     termination = Column(String)
-
     kills = relationship('Kill', backref='game')
     starting_time = Column(DateTime)
     ending_time = Column(DateTime)
@@ -183,8 +184,12 @@ class Game(Base):
     winner = relationship('Player', foreign_keys=[winner_id])
 
     def winner_name(self):
-        return (db_session.query(Player.pseudo)
-                .join(Game, Player.id == self.winner_id).first()[0])
+        return (
+            db_session
+            .query(Player.pseudo)
+            .join(Game, Player.id == self.winner_id)
+            .first()[0]
+            )
 
 
 class Weapon(Base):
