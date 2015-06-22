@@ -3,11 +3,11 @@
 {% macro player_info(player) -%}
 <dl>
   <dt> Total Kills </dt>
-  <dd> {{ player.kill_sum }} </dd>
+  <dd> {{ player.kill_sum() }} </dd>
   <dt> Total Killed </dt>
-  <dd> {{ player.killed_sum }} </dd>
+  <dd> {{ player.killed_sum() }} </dd>
   <dt> Ratio k/k </dt>
-  <dd> {{ player.ratio_kill_killed }} </dd>
+  <dd> {{ player.ratio_kill_killed() }} </dd>
 </dl>
 {%- endmacro %}
 
