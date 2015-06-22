@@ -11,7 +11,7 @@
         <dt>{{ weapon.weapon }}</dt>
         <dd>
           <p>Total kills {{ weapon.total }}</p>
-          <p>Best player {{ weapon.pseudo }} with {{ weapon.kill }} kills</p>
+          <p>Best player {{ weapon.pseudo|process_color|safe }} with {{ weapon.kill }} kills</p>
         </dd>
       </dl>
     <section>

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>{{ player.pseudo }} details</h2>
+  <h2> {{ player.pseudo|process_color|safe }} details</h2>
 <article>
   <h3>General statistics</h3>
   <dl>
@@ -30,7 +30,8 @@
   <h3>Last kill</h3>
     <ul>
     {% for kill in player.kill_list(5) %}
-      <li><a href={{ url_for('show_player_details', pseudo=kill) }}>{{ kill }}</a></li>
+      <li><a href={{ url_for('show_player_details', pseudo=kill) }}>{{
+          kill|process_color|safe }}</a></li>
     {% endfor %}
     </ul>
 </article>
@@ -38,7 +39,8 @@
   <h3>Last killed by</h3>
     <ul>
     {% for killed in player.killed_list(5) %}
-      <li><a href={{ url_for('show_player_details', pseudo=killed) }}>{{ killed }}</a></li>
+      <li><a href={{ url_for('show_player_details', pseudo=killed) }}>{{
+          killed|process_color|safe }}</a></li>
     {% endfor %}
     </ul>
 </article>
