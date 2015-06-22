@@ -1,11 +1,24 @@
 from .model import Player, Game, Weapon, db_session, Kill
 from flask import Flask, render_template, make_response
-from sqlalchemy import desc, func, and_
+from sqlalchemy import desc, func, and_, or_
 import pygal
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+color_dict = dict([('^0', '#000000'), ('^1', '#FF0000'), ('^2', '#00FF00'),
+    ('^3', '#FFFF00'),
+    ('^4', '#0000FF'), ('^5', '#00FFFF'), ('^6', '#FF00FF'), ('^7', '#FFFFFF')])
+
+@app.template_filter('process_color')
+def process_color(pseudo):
+    s = pseudo[:]
+    for items in color_dict:
+        s = s.replace(items, '<span style="color:{}">'.format(color_dict[items]))
+    for c in range(pseudo.count('^')):
+        s += '</span>'
+    print(s)
+    return s
 
 @app.route('/')
 def home_page():
@@ -37,7 +50,7 @@ def show_player_details(pseudo):
 @app.route('/weapongraph/<pseudo>.svg')
 def generate_weapon_graph(pseudo):
     radar_chart = pygal.Radar()
-    radar_chart.title = '{} Weapon use'.format(pseudo)
+    radar_chart.title = 'Weapon use'
     labels = []
     values = []
     for row in Player.query.filter_by(pseudo=pseudo).first().weapon_statistics:
@@ -50,9 +63,33 @@ def generate_weapon_graph(pseudo):
     response.content_type = 'image/svg+xml'
     return response
 
+
 @app.route('/ratiograph/<pseudo>.svg')
-def generate_ratiograph(pseudo):
-    player = Player.query.filter_by(pseudo=pseudo).first() 
+def generate_ratio_graph(pseudo):
+    player = Player.query.filter_by(pseudo=pseudo).first()
+    labels = []
+    values = []
+    games = (
+        db_session
+        .query(Kill.game_id)
+        .filter(or_(Kill.player_killer_id == player.id,
+            Kill.player_killed_id == player.id))
+        .group_by(Kill.game_id)
+        .all()
+        )
+    for row in games:
+        game = Game.query.get(row.game_id)
+        labels.append(game.ending_time)
+        values.append(player.ratio_kill_killed(game.ending_time))
+    line_chart = pygal.Line()
+    line_chart.title = 'Ratio evolution'
+    line_chart.x_labels = map(str, labels)
+    line_chart.add('ratio k/k', values)
+    svg = line_chart.render()
+    response = make_response(svg)
+    response.content_type = 'image/svg+xml'
+    return response
+
 
 
 @app.route('/gamehistory')

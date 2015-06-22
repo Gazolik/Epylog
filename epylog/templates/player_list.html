@@ -4,7 +4,7 @@
 <article>
   {%for player in top_players %}
     <section>           
-      <h4><a href={{ url_for('show_player_details', pseudo=player.pseudo) }}>{{ player.pseudo }}</a></h4>
+      <h4><a href={{ url_for('show_player_details', pseudo=player.pseudo) }}>{{ player.pseudo|process_color|safe }}</a></h4>
       {{ player_info(player=player) }}
     </section>
   {% endfor %}

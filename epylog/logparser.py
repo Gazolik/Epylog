@@ -1,10 +1,11 @@
 from .model import Game, Player, connection, Kill, Weapon
+from .config import file_name as file_name
 import datetime
 import pyinotify
 
 
-file_name = "timeStamp.log"
-current_game = Game(map_name=None, termination=None, winner = None)
+
+current_game = Game(map_name=None, termination=None, winner=None)
 player_id_matching = {}  # (id ingame du joueur, pseudo)
 player_id_matching['1022'] = 'world'
 
@@ -51,9 +52,9 @@ def parser(line, f):
         kill.weapon = weapon_id_matching[int(id_weapon)]
         kills_list.append(kill)
     elif splited_line[1] == 'Item:':
-        id_looter = splited_line[2]
-        name_item = splited_line[3][0:-1]
-        name_player = player_id_matching[id_looter]
+        pass
+        # TODO
+        # Add item use, drop
     elif splited_line[1] in ('Rcon', 'InitGame:'):
         connection.rollback()
         kills_list.clear()

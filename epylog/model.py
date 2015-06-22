@@ -6,9 +6,7 @@ from sqlalchemy.ext.hybrid import hybrid_method
 from sqlalchemy import func, or_
 import datetime
 
-
 Base = declarative_base()
-engine_name = 'postgresql://epylog@localhost/epylog'
 
 
 class Player(Base):
@@ -23,7 +21,7 @@ class Player(Base):
             .query(func.count(Kill.player_killed_id))
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killer_id != Kill.player_killed_id)
-            .filter(Kill.time < date)
+            .filter(Kill.time <= date)
             .group_by(Kill.player_killer_id)
             .scalar()
             )
@@ -35,7 +33,7 @@ class Player(Base):
             .query(func.count(Kill.player_killer_id))
             .filter_by(player_killed_id=self.id)
             .filter(Kill.player_killer_id != Kill.player_killed_id)
-            .filter(Kill.time < date)
+            .filter(Kill.time <= date)
             .group_by(Kill.player_killed_id)
             .scalar()
             )
@@ -46,7 +44,7 @@ class Player(Base):
             db_session
             .query(func.count(Kill.player_killer_id))
             .filter_by(player_killed_id=self.id)
-            .filter(Kill.time < date)
+            .filter(Kill.time <= date)
             .group_by(Kill.player_killed_id)
             .scalar()
             )
@@ -56,7 +54,7 @@ class Player(Base):
         return (
             db_session
             .query(Kill.weapon_id,
-            func.count(Kill.weapon_id).label('kill_count'))
+                func.count(Kill.weapon_id).label('kill_count'))
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
@@ -96,7 +94,10 @@ class Player(Base):
                 .order_by('kill_count desc')
                 .first()
                 )
+<<<<<<< HEAD
 
+=======
+>>>>>>> b6814640242ab033c941a49148d8838e845eb0c7
         return player
 
     @property
@@ -147,6 +148,10 @@ class Player(Base):
     @hybrid_method
     def ratio_kill_death(self, date=datetime.datetime.max):
         return round((self.kill_sum(date) or 0) / (self.death_sum(date) or 1), 2)
+<<<<<<< HEAD
+=======
+    
+>>>>>>> b6814640242ab033c941a49148d8838e845eb0c7
 
     @property
     def win_number(self):

@@ -1,8 +1,8 @@
-insert into weapon values (0,'Unknow');
 insert into weapon values (1,'Shotgun');
 insert into weapon values (2,'Gauntlet');
 insert into weapon values (3,'Machinegun');
 insert into weapon values (4,'Grenade_launcher');
+insert into weapon values (5,'Grenade_splash');
 insert into weapon values (6,'Rocket');
 insert into weapon values (7,'RocketSplash');
 insert into weapon values (8,'Plasma');
