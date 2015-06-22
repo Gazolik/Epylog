@@ -9,8 +9,10 @@
     <section>
       <dl>
         <dt>{{ weapon.weapon }}</dt>
-        <dd>total kills {{ weapon.total }}
-        best player {{ weapon.pseudo }} with {{ weapon.kill }} kills<dd>
+        <dd>
+          <p>Total kills {{ weapon.total }}</p>
+          <p>Best player {{ weapon.pseudo }} with {{ weapon.kill }} kills</p>
+        </dd>
       </dl>
     <section>
     {% endfor %}
