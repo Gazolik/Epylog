@@ -1,1 +1,99 @@
-body            { font-family: sans-serif; background: #eee; }
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+*:hover {
+  transition: 0.2s;
+}
+
+
+body {
+  background: #1e2124;
+  color: #fff;
+  font-family: 'Open sans';
+}
+
+body a {
+  color: #1dc5f2;
+  text-decoration: none;
+}
+
+nav {
+  border-bottom: 1px solid #1dc5f2;
+  border-top: 1px solid #1dc5f2;
+  text-align: center;
+}
+
+nav ul {
+  margin: 0;
+}
+
+nav ul li {
+  display: inline-block;
+  padding: 25px;
+  text-transform: uppercase;
+}
+
+nav ul li:hover {
+  background: #1dc5f2;
+}
+
+nav ul li:hover a {
+  color: #fff;
+}
+
+
+article:not(.weapons) section {
+  border: 1px solid #1dc5f2;
+  display: inline-block;
+  margin: 5px;
+  min-height: 110px;
+  padding: 15px;
+  width: 30%;
+}
+
+dt {
+  font-weight: 600;
+}
+
+dl dt, dl dd {
+  display: inline-block;
+}
+
+section dl dt:after {
+  content: " : ";
+  display: inline;
+}
+
+section dl dd {
+  margin-left: 0;
+}
+
+section dl dd:after {
+  content: " ";
+  display: block;
+}
+
+section h4 {
+  background: rgba(33, 193, 237, 0.6);
+  margin: -15px -15px 15px;
+  padding: 10px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+section h4 a {
+  color: #fff;
+}
+
+article ul li dl dd {
+  margin: 0 10px;
+}
+
+.weapons embed {
+  display: block;
+  margin: 0 auto;
+  width: 60%;
+}
+
+.weapons section > * {
+  display: inline-block;
+}

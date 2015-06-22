@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method
 from sqlalchemy import func, or_
 import datetime
-from .config import engine_name as engine_name
+from .config import engine_name
 
 Base = declarative_base()
 
