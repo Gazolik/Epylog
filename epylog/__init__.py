@@ -1,1 +1,1 @@
-from . import model, logparser, routes
+from . import model, weapon_db, logparser, routes
