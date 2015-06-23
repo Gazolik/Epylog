@@ -23,7 +23,7 @@ COLORS = {
 
 
 def svg_response(func):
-    """Decorator allowing svg response for graph generation
+    """Decorator allowing svg responses for graph generation.
     """
     @wraps(func)
     def wrap(*args, **kwargs):
