@@ -1,5 +1,6 @@
 from flask import Flask, render_template, make_response
 from sqlalchemy import desc, func, and_, or_
+from functools import wraps
 import pygal
 
 from .model import Player, Game, Weapon, db_session, Kill
@@ -17,6 +18,16 @@ COLORS = {
     '^5': '#00FFFF',
     '^6': '#FF00FF',
     '^7': '#FFFFFF'}
+
+
+def svg_response(func):
+
+    @wraps(func)
+    def wrap(*args, **kwargs):
+        response = make_response(func(*args, **kwargs))
+        response.content_type = 'image/svg+xml'
+        return response
+    return wrap
 
 
 @app.template_filter('process_color')
@@ -50,6 +61,7 @@ def show_player_details(pseudo):
 
 
 @app.route('/weapongraph/<pseudo>.svg')
+@svg_response
 def generate_weapon_graph(pseudo):
     radar_chart = pygal.Radar()
     radar_chart.title = 'Weapon use'
@@ -60,12 +72,11 @@ def generate_weapon_graph(pseudo):
         values.append(row.kill_count)
     radar_chart.x_labels = labels
     radar_chart.add('Weapon use', values)
-    response = make_response(radar_chart.render())
-    response.content_type = 'image/svg+xml'
-    return response
+    return radar_chart.render()
 
 
 @app.route('/ratiograph/<pseudo>.svg')
+@svg_response
 def generate_ratio_graph(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first()
     labels = []
@@ -86,9 +97,7 @@ def generate_ratio_graph(pseudo):
     line_chart.title = 'Ratio evolution'
     line_chart.x_labels = labels
     line_chart.add('Ratio k/k', values)
-    response = make_response(line_chart.render())
-    response.content_type = 'image/svg+xml'
-    return response
+    return line_chart.render()
 
 
 @app.route('/gamehistory')
@@ -139,6 +148,7 @@ def show_weapon_statistics():
 
 
 @app.route('/weapons/weapon_graph.svg')
+@svg_response
 def generate_all_weapons_graph():
     bar_diag = pygal.HorizontalBar()
     bar_diag.title = 'Total weapon kills'
@@ -152,6 +162,4 @@ def generate_all_weapons_graph():
         .order_by(func.count(Weapon.weapon_name)))
     for weapon in weapon_list:
         bar_diag.add(weapon.weapon_name, weapon.count)
-    response = make_response(bar_diag.render())
-    response.content_type = 'image/svg+xml'
-    return response
+    return bar_diag.render()
