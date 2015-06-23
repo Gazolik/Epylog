@@ -74,9 +74,11 @@ def generate_weapon_graph(pseudo):
     radar_chart.title = 'Weapon use'
     labels = []
     values = []
-    for row in Player.query.filter_by(pseudo=pseudo).first().weapon_statistics:
-        labels.append(Weapon.query.get(row.weapon_id).weapon_name)
-        values.append(row.kill_count)
+    stats = dict(
+            Player.query.filter_by(pseudo=pseudo).first().weapon_statistics)
+    for row in Weapon.query.all():
+        labels.append(row.weapon_name)
+        values.append(stats.get(row.id))
     radar_chart.x_labels = labels
     radar_chart.add('Weapon use', values)
     return radar_chart.render()
