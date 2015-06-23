@@ -3,6 +3,8 @@ from sqlalchemy import desc, func, and_, or_
 from functools import wraps
 import pygal
 
+import datetime
+
 from .model import Player, Game, Weapon, db_session, Kill
 
 
@@ -32,6 +34,8 @@ def svg_response(func):
 
 @app.template_filter('process_color')
 def process_color(pseudo):
+    """Interpret the special characters in players pseudo as display colors.
+    """
     for key, color in COLORS.items():
         pseudo = pseudo.replace(key, '<span style="color:{}">'.format(color))
     return pseudo + pseudo.count('<span') * '</span>'
@@ -57,7 +61,10 @@ def show_players_list():
 @app.route('/playerdetails/<pseudo>')
 def show_player_details(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first()
-    return render_template('player_details.html', player=player)
+    return render_template(
+            'player_details.html',
+            player=player,
+            actual_date=datetime.datetime.now())
 
 
 @app.route('/weapongraph/<pseudo>.svg')
