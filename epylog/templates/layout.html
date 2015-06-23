@@ -20,13 +20,13 @@
   <dt> Starded <dt>
   <dd> 
     <time itemprop="Started"> 
-      {{ game.starting_time }}
+      {{ game.starting_time.strftime('%Y-%m-%d %H:%M') }}
     </time>
   </dd> 
   <dt> Ended <dt>
   <dd>
     <time itemprop="Ended">
-      {{ game.ending_time }}
+      {{ game.ending_time.strftime('%Y-%m-%d %H:%M') }}
     </time>
   </dd> 
   <dt> Winner </dt>
