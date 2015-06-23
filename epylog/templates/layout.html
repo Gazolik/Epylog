@@ -30,7 +30,7 @@
     </time>
   </dd> 
   <dt> Winner </dt>
-  <dd> {{ game.winner_name()|process_color|safe }} </dd>
+  <dd><a href={{ url_for('show_player_details', pseudo = game.winner_name()) }}> {{ game.winner_name()|process_color|safe }} </dd>
   <dt> Termination </dt>
   <dd> {{ game.termination }} </dd>
 </dl>
