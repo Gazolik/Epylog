@@ -70,7 +70,7 @@ def show_player_details(pseudo):
 @app.route('/weapongraph/<pseudo>.svg')
 @svg_response
 def generate_weapon_graph(pseudo):
-    radar_chart = pygal.Radar()
+    radar_chart = pygal.Radar(fill=True)
     radar_chart.title = 'Weapon use'
     labels = []
     values = []
@@ -102,7 +102,7 @@ def generate_ratio_graph(pseudo):
         labels.append(str(game.ending_time))
         values_kk.append(player.ratio_kill_killed(game.ending_time))
         values_kd.append(player.ratio_kill_death(game.ending_time))
-    line_chart = pygal.Line()
+    line_chart = pygal.Line(fill=True, interpolate='cubic')
     line_chart.title = 'Ratio evolution'
     line_chart.x_labels = labels
     line_chart.add('Ratio k/k', values_kk)
