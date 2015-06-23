@@ -87,7 +87,8 @@ def generate_weapon_graph(pseudo):
 def generate_ratio_graph(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first()
     labels = []
-    values = []
+    values_kk = []
+    values_kd = []
     games = (
         db_session
         .query(Kill.game_id)
@@ -99,11 +100,13 @@ def generate_ratio_graph(pseudo):
     for row in games:
         game = Game.query.get(row.game_id)
         labels.append(str(game.ending_time))
-        values.append(player.ratio_kill_killed(game.ending_time))
+        values_kk.append(player.ratio_kill_killed(game.ending_time))
+        values_kd.append(player.ratio_kill_death(game.ending_time))
     line_chart = pygal.Line()
     line_chart.title = 'Ratio evolution'
     line_chart.x_labels = labels
-    line_chart.add('Ratio k/k', values)
+    line_chart.add('Ratio k/k', values_kk)
+    line_chart.add('Ratio k/d', values_kd)
     return line_chart.render()
 
 
