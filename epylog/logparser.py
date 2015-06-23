@@ -90,6 +90,7 @@ class Parser():
             if player is None:
                 player = Player(pseudo=name_player)
                 connection.add(player)
+                connection.flush()
 
 
 parser = Parser()

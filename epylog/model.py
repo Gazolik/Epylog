@@ -78,7 +78,6 @@ class Player(Base):
             .filter_by(player_killer_id=self.id)
             .filter(Kill.player_killed_id != Kill.player_killer_id)
             .group_by(Kill.weapon_id)
-            .order_by('kill_count desc')
             .all())
 
     @property
