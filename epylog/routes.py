@@ -21,6 +21,8 @@ COLORS = {
 
 @app.template_filter('process_color')
 def process_color(pseudo):
+    """Interpret the special characters in players pseudo as display colors.
+    """
     for key, color in COLORS.items():
         pseudo = pseudo.replace(key, '<span style="color:{}">'.format(color))
     return pseudo + pseudo.count('<span') * '</span>'
