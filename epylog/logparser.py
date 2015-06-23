@@ -16,6 +16,9 @@ for i in weapon_list:
 
 
 class Parser():
+    """
+    Class used in order to parse a line from Openarena serverlog file
+    """
     def __init__(self):
         self.current_game = Game(map_name=None, termination=None, winner=None)
         try:
@@ -27,6 +30,9 @@ class Parser():
             print('Date file doesn\'t exist, reading the whole file')
 
     def parse(self, line, f):
+        """
+        Parse a line from the file and put data in database
+        """
         splited_line = line.split(' ')
         time = float(splited_line[0])
         if time <= self.last_exit:
@@ -93,6 +99,10 @@ class EventHandler(pyinotify.ProcessEvent):
     where = 0
 
     def process_IN_MODIFY(self, event):
+        """
+        Used when file is modified, if content is erased,
+        read from the begining else read from the last update
+        """
         with open(file_name) as f:
             f.seek(0, 2)
             if(f.tell() <= self.where):
