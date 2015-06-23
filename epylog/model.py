@@ -68,7 +68,7 @@ class Player(Base):
     @property
     def weapon_statistics(self):
         """Return, for one player, the number of kills with each weapon.
-        If the player has never used a weapon, this weapon will not 
+        If the player has never used a weapon, this weapon will not
         appear in the list.
         """
         return (
@@ -143,15 +143,16 @@ class Player(Base):
         If there is no number specified, all last players killed are
         considered.
         """
-        return [
-            p.pseudo for p in (
-                db_session.query(Player.pseudo)
-                .select_from(Kill)
-                .join(Kill.player_killed)
-                .filter(Kill.player_killer_id == self.id)
-                .order_by(Kill.time.desc())
-                .limit(number)
-                .all())]
+        return (
+            db_session.query(
+                Player.pseudo.label('pseudo'),
+                Kill.time.label('time'))
+            .select_from(Kill)
+            .join(Kill.player_killed)
+            .filter(Kill.player_killer_id == self.id)
+            .order_by(Kill.time.desc())
+            .limit(number)
+            .all())
 
     @hybrid_method
     def killed_list(self, number=None):
@@ -161,15 +162,16 @@ class Player(Base):
         If there is no number specified, all last players killer are
         considered.
         """
-        return [
-            p.pseudo for p in (
-                db_session.query(Player.pseudo)
-                .select_from(Kill)
-                .join(Kill.player_killer)
-                .filter(Kill.player_killed_id == self.id)
-                .order_by(Kill.time.desc())
-                .limit(number)
-                .all())]
+        return (
+            db_session.query(
+                Player.pseudo.label('pseudo'),
+                Kill.time.label('time'))
+            .select_from(Kill)
+            .join(Kill.player_killer)
+            .filter(Kill.player_killed_id == self.id)
+            .order_by(Kill.time.desc())
+            .limit(number)
+            .all())
 
     @hybrid_method
     def ratio_kill_killed(self, date=datetime.datetime.max):

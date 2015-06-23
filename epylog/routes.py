@@ -2,6 +2,8 @@ from flask import Flask, render_template, make_response
 from sqlalchemy import desc, func, and_, or_
 import pygal
 
+import datetime
+
 from .model import Player, Game, Weapon, db_session, Kill
 
 
@@ -48,7 +50,10 @@ def show_players_list():
 @app.route('/playerdetails/<pseudo>')
 def show_player_details(pseudo):
     player = Player.query.filter_by(pseudo=pseudo).first()
-    return render_template('player_details.html', player=player)
+    return render_template(
+            'player_details.html',
+            player=player,
+            actual_date=datetime.datetime.now())
 
 
 @app.route('/weapongraph/<pseudo>.svg')
