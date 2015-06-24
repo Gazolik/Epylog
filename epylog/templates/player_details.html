@@ -21,9 +21,9 @@
     <dt> Favorite weapon </dt>
     <dd> {{ player.favorite_weapon.weapon_name }} </dd>
     <dt> Most killed player </dt>
-    <dd> {{ player.most_killed_player.pseudo }} </dd>
+    <dd> {{ player.most_killed_player.pseudo|process_color|safe }} </dd>
     <dt> Most killed by player </dt>
-    <dd> {{ player.most_killed_by_player.pseudo }} </dd>
+    <dd> {{ player.most_killed_by_player.pseudo|process_color|safe }} </dd>
   </dl>
 </article>
 <article>
