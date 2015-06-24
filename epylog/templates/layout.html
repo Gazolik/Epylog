@@ -8,7 +8,7 @@
   <dd> {{ player.killed_sum() }} </dd>
   <dt> Ratio k/k </dt>
   <dd> {{ player.ratio_kill_killed() }} </dd>
-  <dt> Total game won</dt>
+  <dt> Total games won</dt>
   <dd> {{ player.win_number }} </dd>
 </dl>
 {%- endmacro %}
@@ -17,7 +17,7 @@
 <dl> 
   <dt> Map </dt>
   <dd> {{ game.map_name }} </dd>
-  <dt> Starded <dt>
+  <dt> Started <dt>
   <dd> 
     <time itemprop="Started"> 
       {{ game.starting_time.strftime('%Y-%m-%d %H:%M') }}
