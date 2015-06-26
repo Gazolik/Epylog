@@ -108,10 +108,10 @@ def generate_ratio_graph(pseudo):
         .all())
     for row in games:
         game = Game.query.get(row.game_id)
-        labels.append(str(game.ending_time))
+        labels.append(game.ending_time.strftime('%Y-%m-%d %H:%M'))
         values_kk.append(player.ratio_kill_killed(game.ending_time))
         values_kd.append(player.ratio_kill_death(game.ending_time))
-    line_chart = pygal.Line(fill=True, interpolate='cubic')
+    line_chart = pygal.Line(fill=True, interpolate='cubic', x_label_rotation=30)
     line_chart.title = 'Ratio evolution'
     line_chart.x_labels = labels
     line_chart.add('Ratio k/k', values_kk)
